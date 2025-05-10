@@ -73,6 +73,7 @@ jobs:
         oauth-client-id: ${{ secrets.TS_CLIENT_ID }}
         oauth-secret: ${{ secrets.TS_CLIENT_SECRET }}
         tags: tag:homeserver-github-ci
+        ephemeral: true
 
     - name: Do the deploy thing
       run: |
