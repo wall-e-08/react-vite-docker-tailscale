@@ -69,8 +69,8 @@ jobs:
     - name: Connect Tailscale
       uses: tailscale/github-action@v2
       with:
-        oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
-        oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+        oauth-client-id: ${{ secrets.TS_CLIENT_ID }}
+        oauth-secret: ${{ secrets.TS_CLIENT_SECRET }}
         tags: tag:homeserver-github-ci
 
     - name: Do the deploy thing
