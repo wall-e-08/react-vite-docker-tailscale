@@ -73,11 +73,22 @@ jobs:
         oauth-client-id: ${{ secrets.TS_CLIENT_ID }}
         oauth-secret: ${{ secrets.TS_CLIENT_SECRET }}
         tags: tag:homeserver-github-ci
-
-    - name: Do the deploy thing
-      run: |
-        ssh -o "StrictHostKeyChecking no" root@100.89.122.24 "
+    
+    - name: testing ssh connection and deploy
+      with:
+        host: 100.89.122.24
+        username: root
+        key: ${{ secrets.HS_SSH_SECRET }}
+        port: 22
+        script: |
           cd /manual-compose/test-react-tailscale
           docker compose pull
           docker compose up -d
+
+    # - name: Do the deploy thing
+    #   run: |
+    #     ssh -o "StrictHostKeyChecking no" root@100.89.122.24 "
+    #       cd /manual-compose/test-react-tailscale
+    #       docker compose pull
+    #       docker compose up -d
         "
