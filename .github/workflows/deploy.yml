@@ -75,6 +75,7 @@ jobs:
         tags: tag:homeserver-github-ci
     
     - name: testing ssh connection and deploy
+      uses: appleboy/ssh-action@master
       with:
         host: 100.89.122.24
         username: root
