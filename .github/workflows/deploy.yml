@@ -72,7 +72,7 @@ jobs:
     
     - name: Deploy via Tailscale SSH
       run: |
-        tailscale ssh -o StrictHostKeyChecking=no root@100.89.122.24 <<'EOF'
+        tailscale ssh root@100.89.122.24 <<'EOF'
           cd /manual-compose/test-react-tailscale
           docker compose pull
           docker compose up -d
