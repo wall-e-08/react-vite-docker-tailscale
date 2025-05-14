@@ -18,6 +18,9 @@ jobs:
       packages: write
 
     steps:
+    - name: Ubuntu version
+      run: lsb_release -a
+
     - name: Checkout code
       uses: actions/checkout@v3
 
@@ -48,6 +51,7 @@ jobs:
     - name: Install Tailscale CLI
       run: |
         curl -fsSL https://tailscale.com/install.sh | sh
+        tailscale version
 
     - name: Connect to Tailscale (with SSH support)
       env:
