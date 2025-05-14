@@ -11,8 +11,10 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    # runs-on: self-hosted
 
     permissions:
+      contents: read  # ChatGPT suggestion
       packages: write
 
     steps:
@@ -23,34 +25,8 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 22
-
-    # - name: Install dependencies
-    #   run: npm i -D
     - run: npm install --save --save-dev
     - run: npm run build
-
-    # - name: Run tests
-      # run: npm test # or your test command
-
-    # - name: Deploy to VPS via SSH
-    #   uses: appleboy/ssh-action@v1.0.3
-    #   with:
-    #     host: ${{ secrets.VPS_HOST }}
-    #     username: ${{ secrets.VPS_USER }}
-    #     key: ${{ secrets.VPS_SSH_KEY }}
-    #     port: 22
-    #     script: |
-    #       cd /path/to/your/project
-    #       git pull origin master
-    #       npm install
-    #       npm run build
-    #       pm2 restart your-app-name
-
-
-
-
-
-
 
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v3
@@ -58,6 +34,7 @@ jobs:
         registry: ghcr.io
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Build and push container to GHCR
       uses: docker/build-push-action@v5
       with:
@@ -67,29 +44,59 @@ jobs:
           tags: |
               ghcr.io/${{ github.repository_owner }}/react-vite-docker-tailscale:latest
 
-    - name: Connect Tailscale
-      uses: tailscale/github-action@v2
-      with:
-        oauth-client-id: ${{ secrets.TS_CLIENT_ID }}
-        oauth-secret: ${{ secrets.TS_CLIENT_SECRET }}
-        tags: tag:homeserver-github-ci
+    # ChatGPT suggestion START >>>
+    - name: Install Tailscale CLI
+      run: |
+        curl -fsSL https://tailscale.com/install.sh | sh
+
+    - name: Connect to Tailscale (with SSH support)
+      env:
+        TS_AUTHKEY: ${{ secrets.TS_AUTHKEY }}
+      run: |
+        sudo tailscale up \
+          --authkey=${TS_AUTHKEY} \
+          --hostname=gh-runner \
+          --tags=tag:homeserver-github-ci \
+          --ssh
+
+    - name: Show Tailscale connection
+      run: |
+        tailscale status
+        tailscale ip
     
-    - name: testing ssh connection and deploy
-      uses: appleboy/ssh-action@master
-      with:
-        host: 100.89.122.24
-        username: root
-        key: ${{ secrets.HS_SSH_SECRET }}
-        port: 22
-        script: |
+    - name: Deploy via Tailscale SSH
+      run: |
+        tailscale ssh root@100.89.122.24 <<'EOF'
           cd /manual-compose/test-react-tailscale
           docker compose pull
           docker compose up -d
+        EOF
+    # ChatGPT suggestion END <<<
 
-    # - name: Do the deploy thing
-    #   run: |
-    #     ssh -o "StrictHostKeyChecking no" root@100.89.122.24 "
+
+    # - name: Connect Tailscale
+    #   uses: tailscale/github-action@v2
+    #   with:
+    #     oauth-client-id: ${{ secrets.TS_CLIENT_ID }}
+    #     oauth-secret: ${{ secrets.TS_CLIENT_SECRET }}
+    #     tags: tag:homeserver-github-ci
+
+    # # - name: Do the deploy thing
+    # #   run: |
+    # #     ssh -o "StrictHostKeyChecking no" root@100.89.122.24 "
+    # #       cd /manual-compose/test-react-tailscale
+    # #       docker compose pull
+    # #       docker compose up -d
+    # #     "
+    
+    # - name: testing ssh connection and deploy
+    #   uses: appleboy/ssh-action@master
+    #   with:
+    #     host: 100.89.122.24
+    #     username: root
+    #     key: ${{ secrets.HS_SSH_SECRET }}
+    #     port: 22
+    #     script: |
     #       cd /manual-compose/test-react-tailscale
     #       docker compose pull
     #       docker compose up -d
-    #    "
