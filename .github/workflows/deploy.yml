@@ -53,11 +53,8 @@ jobs:
       env:
         TS_AUTHKEY: ${{ secrets.TS_AUTHKEY }}
       run: |
-        sudo tailscale up \
-          --authkey=${TS_AUTHKEY} \
-          --hostname=gh-runner \
-          --tags=tag:homeserver-github-ci \
-          --ssh
+        echo $TS_AUTHKEY
+        sudo tailscale up --authkey=${TS_AUTHKEY} --hostname=gh-runner --tags=tag:homeserver-github-ci --ssh
 
     - name: Show Tailscale connection
       run: |
