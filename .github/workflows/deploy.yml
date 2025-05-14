@@ -50,7 +50,12 @@ jobs:
     # ChatGPT suggestion START >>>
     - name: Install Tailscale CLI
       run: |
-        curl -fsSL https://tailscale.com/install.sh | sh
+        curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/noble.noarmor.gpg | sudo tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null
+        curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/noble.tailscale-keyring.list | sudo tee /etc/apt/sources.list.d/tailscale.list
+
+        sudo apt-get update
+        sudo apt-get install tailscale
+
         tailscale version
 
     - name: Connect to Tailscale (with SSH support)
