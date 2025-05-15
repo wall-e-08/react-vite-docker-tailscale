@@ -79,8 +79,6 @@ jobs:
         EOF
     # ChatGPT suggestion END <<<
 
-
-    
     # - name: Connect Tailscale
     #   uses: tailscale/github-action@v2
     #   with:
