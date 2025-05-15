@@ -5,16 +5,12 @@ on:
   push:
     branches: [master]
 
-# permissions:
-  # contents: read
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    # runs-on: self-hosted
 
     permissions:
-      contents: read  # ChatGPT suggestion
+      # contents: read  # ChatGPT suggestion
       packages: write
 
     steps:
@@ -47,7 +43,6 @@ jobs:
           tags: |
               ghcr.io/${{ github.repository_owner }}/react-vite-docker-tailscale:latest
 
-    # ChatGPT suggestion START >>>
     - name: Install Tailscale CLI
       run: |
         curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/noble.noarmor.gpg | sudo tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null
@@ -77,31 +72,3 @@ jobs:
           docker compose pull
           docker compose up -d
         EOF
-    # ChatGPT suggestion END <<<
-
-    # - name: Connect Tailscale
-    #   uses: tailscale/github-action@v2
-    #   with:
-    #     oauth-client-id: ${{ secrets.TS_CLIENT_ID }}
-    #     oauth-secret: ${{ secrets.TS_CLIENT_SECRET }}
-    #     tags: tag:homeserver-github-ci
-
-    # # - name: Do the deploy thing
-    # #   run: |
-    # #     ssh -o "StrictHostKeyChecking no" root@100.89.122.24 "
-    # #       cd /manual-compose/test-react-tailscale
-    # #       docker compose pull
-    # #       docker compose up -d
-    # #     "
-    
-    # - name: testing ssh connection and deploy
-    #   uses: appleboy/ssh-action@master
-    #   with:
-    #     host: 100.89.122.24
-    #     username: root
-    #     key: ${{ secrets.HS_SSH_SECRET }}
-    #     port: 22
-    #     script: |
-    #       cd /manual-compose/test-react-tailscale
-    #       docker compose pull
-    #       docker compose up -d
