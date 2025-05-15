@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      # contents: read  # ChatGPT suggestion
       packages: write
 
     steps:
@@ -43,7 +42,9 @@ jobs:
           tags: |
               ghcr.io/${{ github.repository_owner }}/react-vite-docker-tailscale:latest
 
-    - name: Install Tailscale CLI
+    - name: Install and Connect via Tailscale CLI
+      env:
+        TS_AUTHKEY: ${{ secrets.TS_AUTHKEY }}
       run: |
         curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/noble.noarmor.gpg | sudo tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null
         curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/noble.tailscale-keyring.list | sudo tee /etc/apt/sources.list.d/tailscale.list
@@ -53,20 +54,12 @@ jobs:
 
         tailscale version
 
-    - name: Connect to Tailscale (with SSH support)
-      env:
-        TS_AUTHKEY: ${{ secrets.TS_AUTHKEY }}
-      run: |
         echo $TS_AUTHKEY
         sudo tailscale up --auth-key=${TS_AUTHKEY} --hostname=gh-runner --advertise-tags=tag:homeserver-github-ci --ssh
 
-    - name: Show Tailscale connection
-      run: |
         tailscale status
         tailscale ip
-    
-    - name: Deploy via Tailscale SSH
-      run: |
+
         tailscale ssh root@100.89.122.24 <<'EOF'
           cd /manual-compose/test-react-tailscale
           docker compose pull
