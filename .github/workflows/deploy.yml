@@ -67,7 +67,6 @@ jobs:
         tailscale status
         tailscale ip
 
-        # Copy docker-compose.yml to the server
         tailscale ssh ${TS_HOME_SERVER_USER}@${TS_HOME_SERVER_IP} "mkdir -p ${TS_HOME_SERVER_PROJECT_DIR}"
         cat docker-compose.yml | tailscale ssh ${TS_HOME_SERVER_USER}@${TS_HOME_SERVER_IP} "cat > ${TS_HOME_SERVER_PROJECT_DIR}/docker-compose.yml"
 
