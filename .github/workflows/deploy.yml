@@ -67,11 +67,11 @@ jobs:
         tailscale status
         tailscale ip
 
-        # tailscale ssh ${TS_HOME_SERVER_USER}@${TS_HOME_SERVER_IP} "mkdir -p ${TS_HOME_SERVER_PROJECT_DIR}"
-        # cat docker-compose.yml | tailscale ssh ${TS_HOME_SERVER_USER}@${TS_HOME_SERVER_IP} "cat > ${TS_HOME_SERVER_PROJECT_DIR}/docker-compose.yml"
+        tailscale ssh ${TS_HOME_SERVER_USER}@${TS_HOME_SERVER_IP} "mkdir -p /manual-compose/test-react-tailscale"
+        cat docker-compose.yml | tailscale ssh ${TS_HOME_SERVER_USER}@${TS_HOME_SERVER_IP} "cat > /manual-compose/test-react-tailscale/docker-compose.yml"
 
-        tailscale ssh ${TS_HOME_SERVER_USER}@${TS_HOME_SERVER_IP} "TS_HOME_SERVER_PROJECT_DIR='${TS_HOME_SERVER_PROJECT_DIR} <<'EOF'
-          cd $TS_HOME_SERVER_PROJECT_DIR
+        tailscale ssh ${TS_HOME_SERVER_USER}@${TS_HOME_SERVER_IP} <<'EOF'
+          cd /manual-compose/test-react-tailscale
           docker compose pull
           docker compose up -d
         EOF
