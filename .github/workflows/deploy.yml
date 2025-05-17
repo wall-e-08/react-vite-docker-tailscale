@@ -51,6 +51,7 @@ jobs:
         TS_AUTHKEY: ${{ secrets.TS_AUTHKEY }}
         TS_HOME_SERVER_USER: ${{ vars.TS_HOME_SERVER_USER }}
         TS_HOME_SERVER_IP: ${{ vars.TS_HOME_SERVER_IP }}
+        TS_HOME_SERVER_PROJECT_DIR: ${{ vars.TS_HOME_SERVER_PROJECT_DIR }}
       run: |
         curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/noble.noarmor.gpg | sudo tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null
         curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/noble.tailscale-keyring.list | sudo tee /etc/apt/sources.list.d/tailscale.list
@@ -66,8 +67,12 @@ jobs:
         tailscale status
         tailscale ip
 
+        # Copy docker-compose.yml to the server
+        tailscale ssh ${TS_HOME_SERVER_USER}@${TS_HOME_SERVER_IP} "mkdir -p ${TS_HOME_SERVER_PROJECT_DIR}"
+        cat docker-compose.yml | tailscale ssh ${TS_HOME_SERVER_USER}@${TS_HOME_SERVER_IP} "cat > ${TS_HOME_SERVER_PROJECT_DIR}/docker-compose.yml"
+
         tailscale ssh ${TS_HOME_SERVER_USER}@${TS_HOME_SERVER_IP} <<'EOF'
-          cd /manual-compose/test-react-tailscale
+          cd ${TS_HOME_SERVER_PROJECT_DIR}
           docker compose pull
           docker compose up -d
         EOF

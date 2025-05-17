@@ -1,0 +1,7 @@
+---
+services:
+  testing-docker-react-tailscale:
+    image: ghcr.io/wall-e-08/react-vite-docker-tailscale:latest
+    ports:
+      - "6661:80"
+    restart: always
