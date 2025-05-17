@@ -71,7 +71,7 @@ jobs:
         # cat docker-compose.yml | tailscale ssh ${TS_HOME_SERVER_USER}@${TS_HOME_SERVER_IP} "cat > ${TS_HOME_SERVER_PROJECT_DIR}/docker-compose.yml"
 
         tailscale ssh ${TS_HOME_SERVER_USER}@${TS_HOME_SERVER_IP} <<'EOF'
-          cd ${TS_HOME_SERVER_PROJECT_DIR}
+          cd /manual-compose/test-react-tailscale
           docker compose pull
           docker compose up -d
         EOF
